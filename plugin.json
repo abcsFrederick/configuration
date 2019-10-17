@@ -1,0 +1,10 @@
+{
+    "name": "Configuration",
+    "description": "Customer behavior controll configurations.",
+    "version": "0.1.0",
+    "dependencies": ["HistomicsTK"],
+    "license": "Apache-2.0",
+    "grunt": {
+        "file": "Gruntfile.js"
+    }
+}

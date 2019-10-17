@@ -1,0 +1,7 @@
+.input-group-btn
+  if currentBehavior === 'mouseUp'
+    button.btn.btn-default.h-configure-adding-behavior(type='button', value='mouseUp')
+      span.icon-up-hand(data-toggle='tooltip', title='At mouse up')
+  else
+    button.btn.btn-default.h-configure-adding-behavior(type='button', value='closeTo')
+      span.icon-location(data-toggle='tooltip', title='At closed to')

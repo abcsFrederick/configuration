@@ -1,0 +1,57 @@
+.g-config-breadcrumb-container
+p.g-configuration-settings-description
+  | Create customized pre-defined labels.
+
+.form-group
+  .col-md-3
+    label.control-label(for="g-configuration-settings") Labels
+  .col-md-3
+    label.control-label(for="g-configuration-settings") Line Color
+  .col-md-3
+    label.control-label(for="g-configuration-settings") Fill Color
+  .col-md-2
+    label.control-label(for="g-configuration-settings") Hot Key
+  .col-md-1
+    label.control-label(for="g-configuration-settings") Actions
+  p.g-configuration-settings-description
+  each label in labels
+    .col-md-3
+      p #{label.get('label')}
+    .col-md-3
+      .input-group.g-predefined-label-line-color.colorpicker-element(style='width:100%')
+        input.form-control.input-sm.line-color(type="text", value=label.get('line'))
+        span.input-group-addon
+          i(style='position: relative;left: -8px; background-color:'+label.get('line'))
+    .col-md-3
+      .input-group.g-predefined-label-fill-color.colorpicker-element(style='width:100%')
+        input.form-control.input-sm.fill-color(type="text", value=label.get('fill'))
+        span.input-group-addon
+          i(style='position: relative;left: -8px; background-color:'+label.get('fill'))
+    .col-md-2
+      if label.get('hotkey')
+        p #{label.get('hotkey')}
+      else
+        p (None)
+    .col-md-1
+      i.deleteLabel.icon-minus(label-id=label.get('_id'))
+  .configurationTable
+    .col-md-3
+      .input-group
+        input.g-configuration-settings-label.input-sm.form-control(type="text", value='undefined', title="Label name", placeholder="Label name (default: undefined)")
+    .col-md-3
+      .input-group
+        .input-group.g-label-line-color(style='width:100%')
+          input.form-control.input-sm.colorpicker-component-line(type="text", value="#000000")
+          span.input-group-addon
+            i(style='position: relative;left: -8px;')
+    .col-md-3
+      .input-group
+        .input-group.g-label-fill-color(style='width:100%')
+          input.form-control.input-sm.colorpicker-component-fill(type="text", value="rgba(0,0,0,0)")
+          span.input-group-addon
+            i(style='position: relative;left: -8px;')
+    .col-md-2
+      input.form-control.input-sm.colorpicker-component-hotkey(type="text")  
+    .col-md-1
+      i#addLabel.icon-plus
+p#g-configuration-settings-error-message.g-validation-failed-message
