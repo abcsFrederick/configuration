@@ -2,7 +2,7 @@ from tests import base
 
 
 def setUpModule():
-    base.enabledPlugins.append('colormaps')
+    base.enabledPlugins.append('configuration')
     base.startServer()
 
 

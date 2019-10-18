@@ -1,3 +1,8 @@
+girderTest.importPlugin('jobs');
+girderTest.importPlugin('worker');
+girderTest.importPlugin('large_image');
+girderTest.importPlugin('slicer_cli_web');
+girderTest.importPlugin('HistomicsTK');
 girderTest.startApp();
 
 $(function () {
