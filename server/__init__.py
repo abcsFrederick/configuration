@@ -31,7 +31,7 @@ from .constants import PluginSettings
 @setting_utilities.validator({
     PluginSettings.DEFAULT_BEHAVIOR,
 })
-def validateNonnegativeInteger(doc):
+def validateActions(doc):
     val = doc['value']
     try:
         if val == 'mouseUp' or val == 'closeTo':
