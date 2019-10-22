@@ -75,8 +75,6 @@ before_install:
     - LARGE_IMAGE_VERSION=2.x-maintenance
     - SLICER_CLI_WEB_VERSION=master
     - HISTOMICSTK_VERSION=master
-    # - HISTOGRAM_VERSION=master
-    # - COLORMAPS_VERSION=master
     - main_path=$PWD
     - CONFIGURATION_PATH=$TRAVIS_BUILD_DIR
     - build_path=$HOME/build
@@ -107,12 +105,6 @@ before_install:
 
     - slicer_cli_web_path=$girder_path/plugins/slicer_cli_web
     - git clone https://github.com/girder/slicer_cli_web.git $slicer_cli_web_path && git -C $slicer_cli_web_path checkout $SLICER_CLI_WEB_VERSION
-
-    # - histogram_path=$girder_path/plugins/histogram
-    # - git clone https://github.com/cj-abcs/histogram.git $histogram_path && git -C $histogram_path checkout $HISTOGRAM_VERSION
-
-    # - colormaps_path=$girder_path/plugins/colormaps
-    # - git clone https://github.com/cj-abcs/colormaps.git $colormaps_path && git -C $colormaps_path checkout $COLORMAPS_VERSION
 
     - export MONGO_VERSION=3.4.19
     - export PY_COVG="ON"
