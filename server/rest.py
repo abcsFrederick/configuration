@@ -1,13 +1,29 @@
+import bson
+import json
+import ujson
+import os 
+import six.moves.urllib.request
+import requests
+
 from girder import logger
 from girder.api import access
-from girder.constants import AccessType, TokenScope
+from girder.constants import AccessType, TokenScope, SortDir
 from girder.api.describe import Description, autoDescribeRoute
-from girder.api.rest import Resource, filtermodel
+from girder.api.rest import Resource, filtermodel, setResponseHeader
 from girder.models.setting import Setting
+from girder.utility import JsonEncoder
 from girder.models.model_base import ValidationException
 from girder.exceptions import RestException
+from girder.models.file import File
+
 from .constants import PluginSettings
 from .models.labels import Labels
+from girder.plugins.large_image.models.annotation import AnnotationSchema, Annotation
+from girder.plugins.large_image.rest.annotation import AnnotationResource
+from girder.plugins.large_image.models.annotationelement import Annotationelement
+from girder.plugins.overlays.models.overlay import Overlay
+from girder.plugins.jobs.models.job import Job
+from girder.plugins.worker import utils
 
 
 class Configuration(Resource):
@@ -20,6 +36,8 @@ class Configuration(Resource):
         self.route('PUT', ('label', ':id',), self.updateDefination)
         self.route('DELETE', ('label', ':id',), self.deleteDefination)
         self.route('GET', ('settings',), self.getSettings)
+
+        self.route('POST', ('count', 'label', ':id',), self.count)
 
     @access.user(scope=TokenScope.DATA_WRITE)
     @filtermodel(model='labels', plugin='configuration')
@@ -106,3 +124,139 @@ class Configuration(Resource):
         if params['label'] is not None:
             query['label'] = params['label']
         return list(Labels().find(query))
+
+    @access.user
+    @autoDescribeRoute(
+        Description('update a label.')
+        .param('id', 'The ID of the annotation.', paramType='path')
+    )
+    def count(self, id):
+        user = self.getCurrentUser()
+        token = self.getCurrentToken()
+
+        annotation = Annotation().load(
+            id, user=user, level=AccessType.READ, getElements=False)
+        if annotation is None:
+            raise RestException('Annotation not found', 404)
+        annotation = Annotation().filter(annotation, self.getCurrentUser())
+
+        request = utils.getWorkerApiUrl() + '/annotation/' + id
+        headers = {'Girder-Token': token['_id']}
+        resp = requests.get(request, headers=headers)
+        # print resp.json()
+        # function
+        # elements = AnnotationResource().getAnnotation(id, params={})
+        elements = resp.json()['annotation']['elements']
+
+        imageId = annotation['itemId']
+        sort = [
+            ('itemId', SortDir.ASCENDING),
+            ('index', SortDir.ASCENDING),
+            ('created', SortDir.ASCENDING),
+        ]
+        query = {}
+        query['itemId'] = str(imageId)
+        overlays = list(Overlay().filterResultsByPermission(
+            cursor=Overlay().find(query, sort=sort),
+            user=user,
+            level=AccessType.READ,
+            limit=1, offset=0
+        ))
+        print overlays
+        try:
+            # For now assume there is just one overlay
+            overlay = overlays[0]
+        except:
+            raise RestException('There is no overlay for this WSI.')
+        overlayItem = overlay['overlayItemId']
+
+        query = {
+            'itemId': bson.objectid.ObjectId(overlayItem),
+            'mimeType': {'$regex': '^image/tiff'}
+        }
+        files = list(File().find(query, limit=2))
+        if len(files) >= 1:
+            fileId = str(files[0]['_id'])
+        if not fileId:
+            raise RestException('Missing "fileId" parameter.')
+
+        file_ = File().load(fileId, user=user, level=AccessType.READ, exc=True)
+
+
+        path = os.path.join(os.path.dirname(__file__), '../scripts/',
+                            'countCell.py')
+        with open(path, 'r') as f:
+            script = f.read()
+
+        title = 'Count number of cell for overlay %s' % overlay['_id']
+        job = Job().createJob(title=title, type='countCell',
+                              handler='worker_handler', user=user)
+        jobToken = Job().createJobToken(job)
+
+        task = {
+            'mode': 'python',
+            'script': script,
+            'name': title,
+            'inputs': [{
+                'id': 'in_path',
+                'target': 'filepath',
+                'type': 'string',
+                'format': 'text'
+            }, {
+                'id': 'elements',
+                'type': 'string',
+                'format': 'text',
+            }],
+            'outputs': [{
+                'id': 'elementsWithCell',
+                'target': 'memory',
+                'type': 'string',
+                'format': 'text',
+            }],
+        }
+        inputs = {
+            'in_path': utils.girderInputSpec(
+                file_, resourceType='file', token=token),
+            'elements': {
+                'mode': 'inline',
+                'type': 'string',
+                'format': 'text',
+                'data': elements,
+            }
+        }
+
+        outputs = {
+            # 'elementsWithCell': {
+            #     'mode': 'inline',
+            #     'type': 'string',
+            #     'format': 'text'
+            # }
+            'elementsWithCell': {
+                "mode": "girder",
+                "as_metadata": True,
+                "item_id": str(overlayItem),
+                "api_url": utils.getWorkerApiUrl(),
+                "token": token['_id']
+            }
+        }
+        job['kwargs'] = {
+            'task': task,
+            'inputs': inputs,
+            'outputs': outputs,
+            'jobInfo': utils.jobInfoSpec(job, jobToken),
+            'auto_convert': True,
+            'validate': True,
+        }
+
+        job['meta'] = {
+            'creator': 'countCell',
+            'task': 'countCell',
+        }
+
+        job = Job().save(job)
+
+        Job().scheduleJob(job)
+        # return createHistogramJob(item, file_, user=user,
+        #                           token=token, notify=notify,
+        #                           bins=bins, label=label,
+        #                           bitmask=bitmask)

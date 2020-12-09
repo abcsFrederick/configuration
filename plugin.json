@@ -2,7 +2,7 @@
     "name": "Configuration",
     "description": "Customer behavior controll configurations.",
     "version": "0.1.0",
-    "dependencies": ["large_image", "HistomicsTK"],
+    "dependencies": ["large_image", "HistomicsTK", "overlays", "jobs"],
     "license": "Apache-2.0",
     "grunt": {
         "file": "Gruntfile.js"

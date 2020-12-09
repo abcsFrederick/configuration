@@ -5,13 +5,15 @@ import View from 'girder/views/View';
 // import events from 'girder_plugins/HistomicsTK/events';
 import { restRequest } from 'girder/rest';
 import events from 'girder/events';
+import eventStream from 'girder/utilities/EventStream';
 
 import configurationTemplate from '../templates/views/configurationTemplate.pug';
 import LabelCollection from '../collections/labels';
 
 var ConfigView = View.extend({
     events: {
-        'click .h-configure-adding-behavior': '_changeBehavior'
+        'click .h-configure-adding-behavior': '_changeBehavior',
+        'click .h-configure-count-behavior': '_countCell'
     },
     initialize: function (settings) {
         this.collection = new LabelCollection();
@@ -43,6 +45,13 @@ var ConfigView = View.extend({
             this.render();
         });
         this.listenTo(this.parentView._style, 'change', this._updateCurrent);
+        this.listenTo(eventStream, 'g:event.count_number_of_cell', _.bind(function (event) {
+            events.trigger('g:alert', {
+                text: 'Count finished! Please toggle annotation icon.',
+                type: 'success',
+                timeout: 4000
+            });
+        }, this));
     },
     render() {
         this.$el.append(configurationTemplate({
@@ -120,6 +129,27 @@ var ConfigView = View.extend({
         }
     },
     unbindKeyboard: function () {
+    },
+    _countCell: function () {
+        let label = this.parentView.annotation.id;
+        restRequest({
+            type: 'POST',
+            url: 'configuration/count/label/' + label
+        }).done((resp) => {
+            events.trigger('g:alert', {
+                icon: 'spin3',
+                text: 'Counting number of cell.',
+                type: 'info',
+                timeout: 4000
+            });
+        }).fail((err) => {
+            events.trigger('g:alert', {
+                icon: 'cancel',
+                text: err.responseJSON.message,
+                type: 'danger',
+                timeout: 4000
+            });
+        });
     }
 }, {
     /**
