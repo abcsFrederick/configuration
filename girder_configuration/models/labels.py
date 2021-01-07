@@ -5,7 +5,7 @@ import datetime
 
 class Labels(AccessControlledModel):
     def initialize(self):
-        self.name = 'configuration'
+        self.name = 'labels'
         self.ensureIndices([
             'created',
             'creatorId',

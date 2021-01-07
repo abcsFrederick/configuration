@@ -1,8 +1,8 @@
 import _ from 'underscore';
 
-import { restRequest } from 'girder/rest';
+import { restRequest } from '@girder/core/rest';
 
-import AccessControlledModel from 'girder/models/AccessControlledModel';
+import AccessControlledModel from '@girder/core/models/AccessControlledModel';
 
 var LabelModel = AccessControlledModel.extend({
     resourceName: 'configuration/label',

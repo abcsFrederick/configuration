@@ -43,18 +43,21 @@ function registerAnnotationLayer(geo) {
                         update = m_this.currentAnnotation.processAction(evt);
                         if (evt.event === geo.event.actionup) {
                             let vertices = m_this.currentAnnotation.options('vertices');
-                            if ($('.h-configure-adding-behavior').val() === 'closeTo') {
-                                if (vertices.length >= 3 && m_this.displayDistance(
-                                    vertices[0], null, evt.mouse.map, 'display') <=
-                                    m_this.options('finalPointProximity')) {
+                            // Only for polygon
+                            if (evt.state.action === 'geo_annotation_polygon') {
+                                if ($('.h-configure-adding-behavior').val() === 'closeTo') {
+                                    if (vertices.length >= 3 && m_this.displayDistance(
+                                        vertices[0], null, evt.mouse.map, 'display') <=
+                                        m_this.options('finalPointProximity')) {
+                                        vertices.pop();
+                                        m_this.currentAnnotation.state(geo.annotation.state.done);
+                                        update = geo.annotation.state.done;
+                                    }
+                                } else {
                                     vertices.pop();
                                     m_this.currentAnnotation.state(geo.annotation.state.done);
                                     update = geo.annotation.state.done;
-                                }
-                            } else {
-                                vertices.pop();
-                                m_this.currentAnnotation.state(geo.annotation.state.done);
-                                update = geo.annotation.state.done;
+                                }  
                             }
                         }
                         break;

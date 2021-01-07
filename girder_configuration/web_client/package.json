@@ -1,0 +1,26 @@
+{
+    "name": "@girder/configuration",
+    "version": "0.1.0",
+    "description": "Customer behavior controll configurations.",
+    "homepage": "https://github.com/abcsFrederick/configuration",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/abcsFrederick/configuration"
+    },
+    "peerDependencies": {
+        "@girder/core": "*"
+    },
+    "main": "./index.js",
+    "girderPlugin": {
+        "name": "configuration",
+        "main": "./main.js",
+        "dependencies": [
+            "large_image_annotation",
+            "histomicsui"
+        ]
+    },
+    "dependencies": {
+        "mousetrap": "^1.6.5"
+    }
+}

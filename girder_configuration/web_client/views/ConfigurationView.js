@@ -1,11 +1,11 @@
 import _ from 'underscore';
 import Mousetrap from 'mousetrap';
 
-import View from 'girder/views/View';
+import View from '@girder/core/views/View';
 // import events from 'girder_plugins/HistomicsTK/events';
-import { restRequest } from 'girder/rest';
-import events from 'girder/events';
-import eventStream from 'girder/utilities/EventStream';
+import { restRequest } from '@girder/core/rest';
+import events from '@girder/core/events';
+import eventStream from '@girder/core/utilities/EventStream';
 
 import configurationTemplate from '../templates/views/configurationTemplate.pug';
 import LabelCollection from '../collections/labels';
@@ -13,7 +13,7 @@ import LabelCollection from '../collections/labels';
 var ConfigView = View.extend({
     events: {
         'click .h-configure-adding-behavior': '_changeBehavior',
-        'click .h-configure-count-behavior': '_countCell'
+        // 'click .h-configure-count-behavior': '_countCell'
     },
     initialize: function (settings) {
         this.collection = new LabelCollection();
@@ -51,6 +51,10 @@ var ConfigView = View.extend({
                 type: 'success',
                 timeout: 4000
             });
+            // FIXME: Reload annotations with count cell
+            // this.parentView.drawElement(undefined, this.parentView._drawingType);
+            $('[data-id=' + this.parentView.annotation.id + '] .h-toggle-annotation').click();
+            $('[data-id=' + this.parentView.annotation.id + '] .h-toggle-annotation').click();
         }, this));
     },
     render() {
@@ -130,27 +134,27 @@ var ConfigView = View.extend({
     },
     unbindKeyboard: function () {
     },
-    _countCell: function () {
-        let label = this.parentView.annotation.id;
-        restRequest({
-            type: 'POST',
-            url: 'configuration/count/label/' + label
-        }).done((resp) => {
-            events.trigger('g:alert', {
-                icon: 'spin3',
-                text: 'Counting number of cell.',
-                type: 'info',
-                timeout: 4000
-            });
-        }).fail((err) => {
-            events.trigger('g:alert', {
-                icon: 'cancel',
-                text: err.responseJSON.message,
-                type: 'danger',
-                timeout: 4000
-            });
-        });
-    }
+    // _countCell: function () {
+    //     let label = this.parentView.annotation.id;
+    //     restRequest({
+    //         type: 'POST',
+    //         url: 'configuration/count/label/' + label
+    //     }).done((resp) => {
+    //         events.trigger('g:alert', {
+    //             icon: 'spin3',
+    //             text: 'Counting number of cell.',
+    //             type: 'info',
+    //             timeout: 4000
+    //         });
+    //     }).fail((err) => {
+    //         events.trigger('g:alert', {
+    //             icon: 'cancel',
+    //             text: err.responseJSON.message,
+    //             type: 'danger',
+    //             timeout: 4000
+    //         });
+    //     });
+    // }
 }, {
     /**
      * Get settings if we haven't yet done so.  Either way, call a callback
