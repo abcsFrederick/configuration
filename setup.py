@@ -5,6 +5,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     "girder-large-image",
+    "girder-large-image-annotation",
     "large-image",
     "histomicsui",
     "pyvips"

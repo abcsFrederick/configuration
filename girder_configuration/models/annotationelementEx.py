@@ -1,4 +1,4 @@
-from girder.plugins.large_image.models.annotationelement import Annotationelement
+from girder_large_image_annotation.models.annotationelement import Annotationelement
 from girder.constants import AccessType
 from girder.models.file import File
 
@@ -12,7 +12,6 @@ class AnnotationelementEx(Annotationelement):
     with File().open(annotationElementsfile) as json_file:
       data = json.load(json_file)
       for key in data.keys():
-        print key
         query = {'element.id': str(key)}
         annotationelements = list(self.find(query=query))
         if len(annotationelements) != 0:

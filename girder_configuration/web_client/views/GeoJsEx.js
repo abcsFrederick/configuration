@@ -5,7 +5,7 @@ import { wrap } from '@girder/core/utilities/PluginUtils';
 import registerAnnotationLayer from './widgets/annotationLayerEx';
 import registerLayer from './widgets/osmLayerEx';
 
-window.test = ViewerWidget['geojs']
+
 wrap(ViewerWidget['geojs'], 'render', function (render) {
     render.call(this);
     var geo = window.geo;
@@ -15,7 +15,8 @@ wrap(ViewerWidget['geojs'], 'render', function (render) {
         registerAnnotationLayer(geo);
         this.annotationLayer = this.viewer.createLayer('annotationEx', {
             annotations: ['point', 'line', 'rectangle', 'polygon'],
-            showLabels: false
+            showLabels: true,
+            label: true
         });
     }
 

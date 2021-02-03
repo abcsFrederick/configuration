@@ -19,7 +19,7 @@ from girder_jobs.constants import JobStatus
 from .constants import PluginSettings
 from .models.labels import Labels
 
-# from .models.annotationelementEx import AnnotationelementEx
+# from .models.annotationEx import AnnotationSchemaEx
 
 # def _onUpload(event):
 #     try:

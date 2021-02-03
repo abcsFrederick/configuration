@@ -55,3 +55,5 @@ wrap(DrawWidget, 'render', function (render) {
     }
     return this;
 });
+
+export default DrawWidget;
