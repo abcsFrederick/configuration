@@ -1,7 +1,7 @@
-import View from 'girder/views/View';
+import View from '@girder/core/views/View';
 
 import PluginConfigBreadcrumbWidget from
-    'girder/views/widgets/PluginConfigBreadcrumbWidget';
+    '@girder/core/views/widgets/PluginConfigBreadcrumbWidget';
 
 import LabelModel from '../models/labels';
 import LabelCollection from '../collections/labels';

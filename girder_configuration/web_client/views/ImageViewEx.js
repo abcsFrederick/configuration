@@ -1,5 +1,5 @@
-import ImageView from 'girder_plugins/HistomicsTK/views/body/ImageView';
-import { wrap } from 'girder/utilities/PluginUtils';
+import ImageView from '@girder/histomicsui/views/body/ImageView';
+import { wrap } from '@girder/core/utilities/PluginUtils';
 
 import AnnotationPopoverEx from './widgets/AnnotationPopoverEx';
 

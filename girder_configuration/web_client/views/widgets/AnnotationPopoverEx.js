@@ -1,4 +1,4 @@
-import AnnotationPopover from 'girder_plugins/HistomicsTK/views/popover/AnnotationPopover';
+import AnnotationPopover from '@girder/histomicsui/views/popover/AnnotationPopover';
 
 function point(p) {
     return `(${parseInt(p[0])}, ${parseInt(p[1])})`;

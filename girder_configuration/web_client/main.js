@@ -1,6 +1,6 @@
 import './routes';
 
-import { registerPluginNamespace } from 'girder/pluginUtils';
+import { registerPluginNamespace } from '@girder/core/pluginUtils';
 
 import * as configuration from './index';
 
